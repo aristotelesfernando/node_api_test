@@ -6,7 +6,7 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.use('/api', require('./routes/carros'));
+app.use('/api/carros', require('./routes/carros'));
 
 let server = app.listen(3000, function() {
     let host = server.address().address;

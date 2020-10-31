@@ -14,15 +14,22 @@ class CarroDB {
     }
 
     static getCarros(callback) {
-        let conn = CarroDB.connect();
-        let sql = 'select * from carro';
+        return new Promise(function(resolve, reject) {
+            let conn = CarroDB.connect();
+            let sql = 'select * from carro';
 
-        let query = conn.query(sql, function(error, results, fields) {
-            if (error) throw error;
-            callback(results); 
+            let query = conn.query(sql, function(error, results, fields) {
+                if (error) {
+                    // callback(error, null);
+                    // return;
+                    reject(error);
+                } else {
+                    resolve(results); 
+                }                
+            });
+            console.log(query.sql);
+            conn.end();
         });
-        console.log(query.sql);
-        conn.end();
     }
 
     static getCarrosByTipo(tipo, callback) {

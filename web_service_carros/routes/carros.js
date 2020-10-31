@@ -1,16 +1,25 @@
 let express = require('express');
 const router = express.Router();
 const carrodb = require('../model/CarroDB');
+const exec = require('./util');
 
 router.get('/', function(req, res) {
     res.send('API de carros.');
 });
 
-router.get('/', function(req, res) {
-    carrodb.getCarros(function(carros) {
-        res.json(carros);
-    });
-});
+// router.get('/todos', async function(req, res, next) {
+//     try {
+//         let carros = await carrodb.getCarros();
+//         res.json(carros);
+//     } catch (error) {
+//         next(error);        
+//     }
+// });
+
+router.get('/todos', exec(async(req, res, next) => {
+    let carros = await carrodb.getCarros();
+    res.json(carros);
+}));
 
 router.get('/:id(\\d+)', function(req, res) {
     let id = req.params.id;

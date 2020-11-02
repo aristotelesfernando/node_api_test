@@ -1,3 +1,5 @@
+// Classe CarroDB utilizando promises em todos os seus métodos
+
 var mysql = require('mysql');
 
 class CarroDB {
@@ -33,75 +35,113 @@ class CarroDB {
     }
 
     static getCarrosByTipo(tipo, callback) {
-        let conn = CarroDB.connect();
-        let sql = "select * from carro where tipo ='"+ tipo +"'";
+        return new Promise(function(resolve, reject) {
+            let conn = CarroDB.connect();
+            let sql = "select * from carro where tipo ='"+ tipo +"'";
 
-        let query = conn.query(sql, function(error, results, fields) {
-            if (error) throw error;
-            callback(results);
+            let query = conn.query(sql, function(error, results, fields) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+            console.log(query.sql);
+            conn.end();
         });
-        console.log(query.sql);
-        conn.end();
     }
 
     static getCarrosById(id, callback) {
-        let conn = CarroDB.connect();
-        let sql = 'select * from carro where id = ?';
+        return new Promise(function(resolve, reject) {
+            let conn = CarroDB.connect();
+            let sql = 'select * from carro where id = ?';
 
-        let query = conn.query(sql, id, function(error, results, fields) {
-            if (error) throw error;
-
-            if(results.length == 0) {
-                console.error('Nenum carro encontrado...');
-                return;
-            }
-
-            let carro = results[0];
-            callback(carro); 
+            let query = conn.query(sql, id, function(error, results, fields) {
+                if (error) {
+                    reject(error);
+                } else {
+                    if(results.length == 0) {
+                        let error = new Error('A consulta não retornou resultados...');
+                        reject(error);
+                    }
+                    let carro = results[0];
+                    resolve(carro);
+                }
+            });
+            console.log(query.sql);
+            conn.end();
         });
-        console.log(query.sql);
-        conn.end();
     }    
 
     static save(carro, callback) {
-        let conn = CarroDB.connect();
-        let sql = 'insert into carro set ?';
+        return new Promise(function(resolve, reject) {
+            let conn = CarroDB.connect();
+            let sql = 'insert into carro set ?';
 
-        let query = conn.query(sql, carro, function(error, results, fields) {
-            if (error) throw error;
-
-            carro.id = results.insertId;
-            callback(carro);
+            let query = conn.query(sql, carro, function(error, results, fields) {
+                if (error){
+                    reject(error);
+                } else {
+                    carro.id = results.insertId;
+                    resolve(carro);
+                }
+            });
+            console.log(query.sql);
+            conn.end();
         });
-
-        console.log(query.sql);
-        conn.end();
     }
 
     static update(carro, callback) {
-        let conn = CarroDB.connect();
-        let sql = 'update carro set ? where id = ?';
+        return new Promise(function(resolve, reject) {
+            let conn = CarroDB.connect();
+            let sql = 'update carro set ? where id = ?';
 
-        let id = carro.id;
-        let query = conn.query(sql, [carro, id], function(error, results, fields) {
-            if (error) throw error;
-            callback(carro);
+            let id = carro.id;
+            let query = conn.query(sql, [carro, id], function(error, results, fields) {
+                if (error){
+                    reject(error);
+                } else {
+                    resolve(carro);
+                }
+            });
+            console.log(query.sql);
+            conn.end;
         });
-
-        console.log(query.sql);
-        conn.end;
     }
 
     static deleteById(id, callback) {
-        let conn = CarroDB.connect();
-        let sql = 'delete from carro where id = ?';
+        return new Promise(function(resolve, reject) {
+            let conn = CarroDB.connect();
+            let sql = 'delete from carro where id = ?';
 
-        let query = conn.query(sql, id, function(error, results, fields) {
-            if (error) throw error;
-            callback(results.affectedRows); 
+            let query = conn.query(sql, id, function(error, results, fields) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results.affectedRows);
+                }
+            });
+            console.log(query.sql);
+            conn.end();
+        });       
+    }
+
+    static delete(carro) {
+        return new Promise(function(resolve, reject) {
+            let conn = CarroDB.connect();
+            let sql = 'delete from carro where id = ?';
+            let id = carro.id;
+
+            conn.query(sql, id, function(error, results, fields) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(carro);
+                }
+            });
+            console.log(query.sql);
+            conn.end();            
         });
-        console.log(query.sql);
-        conn.end();       
     }
 }
 

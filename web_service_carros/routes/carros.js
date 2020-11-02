@@ -21,40 +21,28 @@ router.get('/todos', exec(async(req, res, next) => {
     res.json(carros);
 }));
 
-router.get('/:id(\\d+)', function(req, res) {
+router.get('/:id(\\d+)', exec(async(req, res, next) => {
     let id = req.params.id;
-    carrodb.getCarrosById(id, function(carro) {
-        res.json(carro);
-    });
-});
+    let carro = await carrodb.getCarrosById(id);
+    res.json(carro);
+}));
 
-router.delete('/:id(\\d+)', function(req, res) {
+router.delete('/:id(\\d+)', exec(async(req, res, next) => {
     let id = req.params.id;
-    carrodb.deleteById(id, function(affectedRows) {
-        res.json( {msg: `${affectedRows} carro foi deletado com sucesso`});
-    });
-});
+    let affectedRows = await carrodb.deleteById(id);
+    res.json({msg: affectedRows > 0 ? 'Carro deletado com sucesso.':`Carro com este ID ${id} não foi encontrado`});
+}));
 
-router.get('/:tipo', function(req, res) {
-    const tipo = req.params.tipo;
-    carrodb.getCarrosByTipo(tipo, function(carros) {
-        res.json(carros);
-    });
-});
+router.get('/tipo/:tipo', exec(async(req, res, next) => {
+    let tipo = req.params.tipo;
+    let carros = await carrodb.getCarrosByTipo(tipo);
+    res.json(carros);
+}));
 
-router.get('//tipo/:tipo', function(req, res) {
-    const tipo = req.params.tipo;
-    carrodb.getCarrosByTipo(tipo, function(carros) {
-        res.json(carros);
-    });
-});
-
-router.post('/', function(req, res) {
-    let carro = req.body;
-    carrodb.save(carro, function(carro) {
-        res.json(carro);
-    })
-});
+router.post('/', exec(async(req, res, next) => {
+    let carro = await carrodb.save(req.body);
+    res.json(carro);
+}));
 
 router.put('/', function(req, res) {
     let carro = req.body;
@@ -63,5 +51,10 @@ router.put('/', function(req, res) {
         res.json({msg: "Carro atualizado com sucesso"});
     });
 });
+
+router.put('/', exec(async(req, res, next) => {
+    let carro = await carrodb.update(req.body);
+    res.json({msd:'Carro atualizado com sucesso'}); 
+}));
 
 module.exports = router;

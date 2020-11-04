@@ -3,7 +3,7 @@ let app = express();
 const carrodb = require('./model/CarroDB');
 let bodyParser = require('body-parser');
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({limit: '10mb', extended: false}));
 app.use(bodyParser.json());
 
 app.use(function(req, res, next) {
@@ -12,6 +12,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/api/carros', require('./routes/carros'));
+app.use('/api/upload', require('./routes/upload'));
 
 app.get('/teste_erro', function(req, res) {
     throw Error('Erro ninja');
@@ -22,6 +23,7 @@ app.get('/teste_erro', function(req, res) {
 //     res.json({err: "Rota não encontrada"});
 // });
 app.use(function(req, res, next) {
+    console.log(req.url);
     let err = new Error("Rota não encontrada nesta api");
     err.status = 404;
     next(err);

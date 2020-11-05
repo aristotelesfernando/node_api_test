@@ -3,6 +3,7 @@ let app = express();
 const carrodb = require('./model/CarroDB');
 let bodyParser = require('body-parser');
 
+app.use(express.static(__dirname + '/view'));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: false}));
 app.use(bodyParser.json());
 
@@ -13,6 +14,7 @@ app.use(function(req, res, next) {
 
 app.use('/api/carros', require('./routes/carros'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/upload-s3', require('./routes/upload-s3'));
 
 app.get('/teste_erro', function(req, res) {
     throw Error('Erro ninja');

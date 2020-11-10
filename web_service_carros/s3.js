@@ -24,9 +24,9 @@ class S3Helper {
             Body: buffer,
             ACL: 'public-read',
             ContentType: 'image/jpeg'
-        }).function(resp) {
+        },function(resp) {
             console.log('Arquivo enviado com sucesso!');
-        }
+        });
     }   
 }
 

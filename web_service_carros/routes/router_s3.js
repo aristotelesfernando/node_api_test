@@ -1,10 +1,10 @@
 let express = require('express');
-const router = express.Router();
+const router_s3 = express.Router();
 const exec = require('./util');
 let fs = require('fs');
 const s3 = require('../s3');
 
-router.post('/', exec(async(req, res, next) => {
+router_s3.post('/', exec(async(req, res, next) => {
     let fileName = req.body.fileName;
     let Base64 = req.body.Base64;
 
